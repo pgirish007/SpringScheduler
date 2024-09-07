@@ -9,9 +9,13 @@ public class ConsumerTask1 implements ScheduledTask {
     @Override
     public void run() {
         System.out.println("Executing Task 1 logic");
+    }
+
+    @Override
+    public void executeCommand(String command) {
+        System.out.println("Executing Task 1 logic with command: " + command);
         // here think like this class will connect to some external system and fetch the data
         // and then process the data
         // and then save the data to the database
     }
-
 }

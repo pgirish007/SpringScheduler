@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -38,6 +39,8 @@ public class SchedulerConfiguration {
         private long fixedDelay;
         private boolean enabled;
         private String className;
+        private ArrayList<String> commands;
+        private String startDateTime;
 
         public String getName() {
             return name;
@@ -86,6 +89,23 @@ public class SchedulerConfiguration {
         public void setClassName(String className) {
             this.className = className;
         }
+
+        public ArrayList<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(ArrayList<String> commands) {
+            this.commands = commands;
+        }
+
+        public String getStartDateTime() {
+            return startDateTime;
+        }
+
+        public void setStartDateTime(String startDateTime) {
+            this.startDateTime = startDateTime;
+        }
+
 
         // Getters and Setters for all properties
     }

@@ -13,4 +13,8 @@ public class ConsumerTask2 implements ScheduledTask {
         // and then process the data
     }
 
+    @Override
+    public void executeCommand(String command) {
+        System.out.println("Executing Task 2 logic with command: " + command);
+    }
 }

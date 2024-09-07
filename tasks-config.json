@@ -3,12 +3,29 @@
     {
       "name": "Task1",
       "cron": "0/10 * * * * *",
-      "enabled": true
+      "enabled": true,
+      "commands": [
+        "build-kernel",
+        "build-user-space"
+      ]
     },
     {
       "name": "Task2",
-      "fixedRate": 15000,
-      "enabled": true
+      "fixedRate": 10000,
+      "enabled": true,
+      "commands": [
+        "build-driver",
+        "build-ui"
+      ]
+    },
+    {
+      "name": "Task2",
+      "startDateTime": "2024-09-07T08:25:00",
+      "enabled": true,
+      "commands": [
+        "check-status",
+        "perform-Patching"
+      ]
     }
   ]
 }
