@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "name": "Task1",
+      "cron": "0/10 * * * * *",
+      "enabled": true
+    },
+    {
+      "name": "Task2",
+      "fixedRate": 15000,
+      "enabled": true
+    }
+  ]
+}

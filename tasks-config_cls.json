@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "className": "com.hsbc.fw.portal.scheduler.consumer.ConsumerTask1",
+      "cron": "0/15 * * * * *",
+      "enabled": true
+    },
+    {
+      "className": "com.hsbc.fw.portal.scheduler.consumer.ConsumerTask2",
+      "fixedRate": 10000,
+      "enabled": true
+    }
+  ]
+}
