@@ -3,8 +3,8 @@ package com.hsbc.fw.portal.scheduler.consumer;
 import com.hsbc.fw.portal.scheduler.schedulerframework.ScheduledTask;
 import org.springframework.stereotype.Component;
 
-@Component("Task1")
-public class ConsumerTask1 implements ScheduledTask {
+@Component("OracleTask")
+public class OracleTask implements ScheduledTask {
 
     @Override
     public void run() {

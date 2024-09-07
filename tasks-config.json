@@ -1,7 +1,7 @@
 {
   "tasks": [
     {
-      "name": "Task1",
+      "name": "OracleTask",
       "cron": "0/10 * * * * *",
       "enabled": true,
       "commands": [
@@ -10,7 +10,7 @@
       ]
     },
     {
-      "name": "Task2",
+      "name": "FTPTask",
       "fixedRate": 10000,
       "enabled": true,
       "commands": [
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "name": "Task2",
+      "name": "HTTPTask",
       "startDateTime": "2024-09-07T09:46:00",
       "enabled": true,
       "commands": [
