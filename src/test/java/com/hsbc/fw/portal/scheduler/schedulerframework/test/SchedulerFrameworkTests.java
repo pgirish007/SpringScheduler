@@ -33,6 +33,7 @@ class SchedulerFrameworkTests {
     public void testScheduledTaskBeans() {
         Map<String, ScheduledTask> tasks = applicationContext.getBeansOfType(ScheduledTask.class);
         assertThat(tasks).isNotEmpty();
-        assertThat(tasks).containsKeys("Task1", "Task2");
+        System.out.println("Tasks: " + tasks);
+        assertThat(tasks).containsKeys("FTPTask", "HTTPTask","MSSQLTask","OracleTask");
     }
 }
