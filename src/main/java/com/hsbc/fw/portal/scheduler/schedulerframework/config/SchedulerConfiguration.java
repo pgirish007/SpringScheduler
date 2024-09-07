@@ -1,17 +1,19 @@
 package com.hsbc.fw.portal.scheduler.schedulerframework.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
 public class SchedulerConfiguration {
-
-    private List<ScheduledTask> tasks;
+    Logger logger= org.slf4j.LoggerFactory.getLogger(SchedulerConfiguration.class);
+    private ArrayList<ScheduledTask> tasks;
 
     @PostConstruct
     public void loadConfigFromJson() {
@@ -24,11 +26,24 @@ public class SchedulerConfiguration {
         }
     }
 
-    public List<ScheduledTask> getTasks() {
+    // Load configuration from a JSON string
+    public void loadFromJson(String jsonContent) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            // Parse JSON and map it to the tasks list
+            SchedulerConfiguration config = objectMapper.readValue(jsonContent, SchedulerConfiguration.class);
+            this.tasks = config.getTasks();
+            logger.info("Configuration reloaded successfully.");
+        } catch (IOException e) {
+            logger.error("Failed to load configuration from JSON", e);
+        }
+    }
+
+    public ArrayList<ScheduledTask> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<ScheduledTask> tasks) {
+    public void setTasks(ArrayList<ScheduledTask> tasks) {
         this.tasks = tasks;
     }
 
@@ -39,7 +54,7 @@ public class SchedulerConfiguration {
         private long fixedDelay;
         private boolean enabled;
         private String className;
-        private ArrayList<String> commands;
+        private LinkedList<String> commands;
         private String startDateTime;
 
         public String getName() {
@@ -90,11 +105,11 @@ public class SchedulerConfiguration {
             this.className = className;
         }
 
-        public ArrayList<String> getCommands() {
+        public LinkedList<String> getCommands() {
             return commands;
         }
 
-        public void setCommands(ArrayList<String> commands) {
+        public void setCommands(LinkedList<String> commands) {
             this.commands = commands;
         }
 
