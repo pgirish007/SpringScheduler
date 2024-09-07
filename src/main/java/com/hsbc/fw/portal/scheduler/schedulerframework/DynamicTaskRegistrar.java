@@ -1,5 +1,4 @@
 package com.hsbc.fw.portal.scheduler.schedulerframework;
-
 import com.hsbc.fw.portal.scheduler.schedulerframework.config.SchedulerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +17,18 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
-public class DynamicTaskRegistrar
-{
-    Logger logger =  LoggerFactory.getLogger(DynamicTaskRegistrar.class);
+public class DynamicTaskRegistrar {
+
+    private static final Logger logger = LoggerFactory.getLogger(DynamicTaskRegistrar.class);
 
     @Autowired
     private TaskScheduler taskScheduler;
 
     @Autowired
-    private SchedulerConfiguration schedulerConfig;
+    private ApplicationContext applicationContext;
 
     @Autowired
-    private ApplicationContext applicationContext;  // Get all beans at runtime
+    private SchedulerConfiguration schedulerConfig;
 
     @PostConstruct
     public void registerTasks() {
@@ -40,10 +39,9 @@ public class DynamicTaskRegistrar
             ScheduledTask scheduledTask = taskBeans.get(task.getName());
             if (scheduledTask != null && task.isEnabled()) {
                 task.getCommands().forEach(command -> {
-                    // Process each task with a different command asynchronously
                     if (task.getStartDateTime() != null) {
-                        // Handle one-time execution at specific date-time
-                        scheduleAtDateTime(task, scheduledTask, command);
+                        // Handle one-time execution at a specific date-time
+                        scheduleAtExactDateTime(task, scheduledTask, command);
                     } else {
                         // Handle repeating tasks (cron, fixedRate, etc.)
                         processTaskAsync(task, scheduledTask, command);
@@ -53,28 +51,32 @@ public class DynamicTaskRegistrar
         });
     }
 
-    // Schedule a task to run at a specific date and time
-    private void scheduleAtDateTime(SchedulerConfiguration.ScheduledTask task, ScheduledTask scheduledTask, String command) {
-        LocalDateTime startDateTime = LocalDateTime.parse(task.getStartDateTime());
-        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        ReentrantLock lock = new ReentrantLock();  // Task-level locking
-
-        taskScheduler.schedule(() -> {
-            runTaskWithCommand(scheduledTask, lock, command);
-        }, startDate);
-    }
-
-
     @Async  // Run task registration in parallel
     public void processTaskAsync(SchedulerConfiguration.ScheduledTask task, ScheduledTask scheduledTask, String command) {
+        logger.info("Processing task asynchronously: {} with command: {}", task.getName(), command);
+
         ReentrantLock lock = new ReentrantLock();  // Task-level locking
-        logger.info("Processing task asynchronously: {}", task.getName());
+
         if (task.getCron() != null) {
             taskScheduler.schedule(() -> runTaskWithCommand(scheduledTask, lock, command), new CronTrigger(task.getCron()));
         } else if (task.getFixedRate() > 0) {
             taskScheduler.scheduleAtFixedRate(() -> runTaskWithCommand(scheduledTask, lock, command), task.getFixedRate());
         } else if (task.getFixedDelay() > 0) {
             taskScheduler.scheduleWithFixedDelay(() -> runTaskWithCommand(scheduledTask, lock, command), task.getFixedDelay());
+        }
+    }
+
+    // Schedule a task to run at a specific date and time, only if the system time matches
+    private void scheduleAtExactDateTime(SchedulerConfiguration.ScheduledTask task, ScheduledTask scheduledTask, String command) {
+        LocalDateTime startDateTime = LocalDateTime.parse(task.getStartDateTime());
+        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        if (new Date().before(startDate)) {  // Only schedule the task if the date/time is in the future
+            taskScheduler.schedule(() -> {
+                runTaskWithCommand(scheduledTask, new ReentrantLock(), command);
+            }, startDate);
+        } else {
+            logger.info("The startDateTime {} for task {} has already passed. Skipping execution.", task.getStartDateTime(), task.getName());
         }
     }
 
@@ -90,4 +92,5 @@ public class DynamicTaskRegistrar
         }
     }
 }
+
 
