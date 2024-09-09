@@ -1,0 +1,32 @@
+@startuml
+package com.hsbc.fw.portal.scheduler.schedulerframework {
+    class DynamicTaskRegistrar {
+        - Logger logger
+        - TaskScheduler taskScheduler
+        - ApplicationContext applicationContext
+        - SchedulerConfiguration schedulerConfig
+        + registerTasks() : void
+    }
+
+    class SchedulerConfiguration {
+        + getTasks() : List<Task>
+    }
+
+    class Task {
+        + getName() : String
+        + isEnabled() : boolean
+        + getCommands() : List<Command>
+        + getStartDateTime() : LocalDateTime
+    }
+
+    class ScheduledTask {
+        + execute(Command command) : void
+    }
+
+    DynamicTaskRegistrar --> SchedulerConfiguration
+    DynamicTaskRegistrar --> TaskScheduler
+    DynamicTaskRegistrar --> ApplicationContext
+    DynamicTaskRegistrar --> ScheduledTask
+    Task --> Command
+}
+@enduml

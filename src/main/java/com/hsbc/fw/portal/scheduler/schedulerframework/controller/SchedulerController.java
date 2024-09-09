@@ -1,7 +1,9 @@
 package com.hsbc.fw.portal.scheduler.schedulerframework.controller;
 
+import com.hsbc.fw.portal.scheduler.datasource.SchedulerService;
 import com.hsbc.fw.portal.scheduler.schedulerframework.config.SchedulerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +16,15 @@ public class SchedulerController {
 
     @Autowired
     private SchedulerConfiguration schedulerConfiguration;
+
+    @Autowired
+    private SchedulerService schedulerService;
+
+    @PostMapping("/schedule")
+    public ResponseEntity<String> scheduleTask(@RequestParam String sourceType) {
+        schedulerService.configureAndSchedule(sourceType);
+        return ResponseEntity.ok("Scheduled tasks from: " + sourceType);
+    }
 
     @PostMapping("/upload-config")
     public String uploadTaskConfig(@RequestParam("file") MultipartFile file) {

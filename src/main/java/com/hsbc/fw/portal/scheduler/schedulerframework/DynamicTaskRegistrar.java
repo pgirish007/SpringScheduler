@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
@@ -90,6 +91,11 @@ public class DynamicTaskRegistrar {
         } else {
             logger.info("Task {} with command {} is already running. Skipping execution.", scheduledTask.getClass().getSimpleName(), command);
         }
+    }
+
+    // Register cron tasks dynamically
+    public ScheduledFuture<?> registerCronTask(Runnable task, String cronExpression) {
+        return taskScheduler.schedule(task, new CronTrigger(cronExpression));
     }
 }
 
